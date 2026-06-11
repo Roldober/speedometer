@@ -23,19 +23,19 @@
         .instrument-cluster {
             background: radial-gradient(circle at 30% 35%, #1c1f2a, #090a0f);
             border-radius: 60px;
-            padding: 2.5rem 3rem 2rem;
+            padding: 2rem 2.5rem 1.8rem;
             box-shadow: 0 35px 55px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 450px;
+            max-width: 420px;
             width: 100%;
         }
         .gauge-container {
             position: relative;
-            width: 340px;
-            height: 340px;
+            width: 300px;
+            height: 300px;
         }
         canvas {
             display: block;
@@ -43,19 +43,19 @@
             height: 100%;
         }
         .readout {
-            margin-top: 1.5rem;
+            margin-top: 1.2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.7rem;
+            gap: 0.5rem;
         }
         .digital-speed {
             background: #0c0e14;
-            padding: 0.5rem 2.2rem;
+            padding: 0.4rem 2rem;
             border-radius: 40px;
             border: 1px solid #3b4055;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.9);
-            font-size: 3.4rem;
+            font-size: 3rem;
             font-weight: 600;
             letter-spacing: 0.5px;
             color: #f2f5ff;
@@ -63,36 +63,36 @@
             line-height: 1.1;
             display: flex;
             align-items: baseline;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
         .unit {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #8f9bb5;
             letter-spacing: 1px;
             text-shadow: none;
-            margin-left: 0.2rem;
+            margin-left: 0.1rem;
         }
         .status-row {
-            margin-top: 1rem;
+            margin-top: 0.6rem;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.8rem;
         }
         .status-badge {
             background: rgba(20, 24, 34, 0.8);
             backdrop-filter: blur(12px);
-            padding: 0.5rem 1.4rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 2.5rem;
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: #cbd2e8;
             font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         .status-dot {
             width: 10px;
@@ -106,20 +106,24 @@
             background: #4cff4c;
             box-shadow: 0 0 14px #4cff4c;
         }
-        .accuracy-text {
-            color: #8f9bb5;
-            font-size: 0.8rem;
+        .debug-info {
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: #5a6080;
+            text-align: center;
+            line-height: 1.4;
+            min-height: 1.2em;
         }
         .warning-box {
             background: rgba(255, 80, 30, 0.1);
             border: 1px solid rgba(255, 100, 40, 0.35);
             border-radius: 14px;
-            padding: 0.7rem 1rem;
-            margin-top: 0.6rem;
+            padding: 0.6rem 1rem;
+            margin-top: 0.5rem;
             text-align: center;
             color: #ffb08c;
             font-size: 0.8rem;
-            line-height: 1.5;
+            line-height: 1.4;
             max-width: 300px;
         }
         .btn {
@@ -128,14 +132,14 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             color: #dce3f5;
             font-weight: 500;
-            padding: 0.5rem 1.3rem;
+            padding: 0.4rem 1.1rem;
             border-radius: 2.5rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 0.4px;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-            margin-top: 0.4rem;
+            margin-top: 0.3rem;
         }
         .btn:hover {
             background: #2c334a;
@@ -144,8 +148,8 @@
         }
         @media (max-width: 480px) {
             .gauge-container {
-                width: 270px;
-                height: 270px;
+                width: 250px;
+                height: 250px;
             }
             .instrument-cluster {
                 padding: 1.5rem 1.2rem 1.2rem;
@@ -157,7 +161,7 @@
 <body>
     <div class="instrument-cluster">
         <div class="gauge-container">
-            <canvas id="speedoCanvas" width="420" height="420" aria-label="Спидометр реальной скорости 0–260 км/ч"></canvas>
+            <canvas id="speedoCanvas" width="380" height="380" aria-label="Спидометр реальной скорости 0–260 км/ч"></canvas>
         </div>
 
         <div class="readout">
@@ -167,12 +171,13 @@
             <div class="status-row">
                 <div class="status-badge">
                     <span id="gpsDot" class="status-dot"></span>
-                    <span id="gpsStatus">Запрос геолокации...</span>
+                    <span id="gpsStatus">Ожидание...</span>
                 </div>
-                <span class="accuracy-text" id="accuracyInfo"></span>
+                <span class="status-badge" id="accuracyBadge" style="font-size:0.75rem;">±?м</span>
             </div>
+            <div class="debug-info" id="debugInfo"></div>
             <div id="warningBox" class="warning-box" style="display: none;"></div>
-            <button id="retryBtn" class="btn" style="display: none;">🔄 Попробовать снова</button>
+            <button id="retryBtn" class="btn" style="display: none;">🔄 Повторить</button>
         </div>
     </div>
 
@@ -193,11 +198,16 @@
             const digitalValue = document.getElementById('digitalValue');
             const gpsDot = document.getElementById('gpsDot');
             const gpsStatus = document.getElementById('gpsStatus');
-            const accuracyInfo = document.getElementById('accuracyInfo');
+            const accuracyBadge = document.getElementById('accuracyBadge');
+            const debugInfo = document.getElementById('debugInfo');
             const warningBox = document.getElementById('warningBox');
             const retryBtn = document.getElementById('retryBtn');
 
             let watchId = null;
+
+            // Для расчёта скорости по координатам
+            let lastPosition = null;
+            let lastTimestamp = null;
 
             function speedToAngle(speed) {
                 const clamped = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speed));
@@ -211,12 +221,12 @@
 
                 const cx = w / 2;
                 const cy = h / 2;
-                const outerRadius = Math.min(w, h) * 0.43;
-                const scaleRadius = outerRadius * 0.84;
-                const numberRadius = outerRadius * 0.7;
-                const smallTickRadius = outerRadius * 0.88;
+                const outerRadius = Math.min(w, h) * 0.44;
+                const scaleRadius = outerRadius * 0.85;
+                const numberRadius = outerRadius * 0.71;
+                const smallTickRadius = outerRadius * 0.89;
 
-                const bgGrad = ctx.createRadialGradient(cx - 8, cy - 8, outerRadius * 0.15, cx, cy, outerRadius * 1.02);
+                const bgGrad = ctx.createRadialGradient(cx - 6, cy - 6, outerRadius * 0.15, cx, cy, outerRadius * 1.02);
                 bgGrad.addColorStop(0, '#1a1e2c');
                 bgGrad.addColorStop(0.8, '#0b0d14');
                 bgGrad.addColorStop(1, '#020303');
@@ -236,11 +246,11 @@
 
                 ctx.save();
                 ctx.translate(cx, cy);
-                ctx.font = '500 16px "Inter", "Segoe UI", "Roboto", sans-serif';
+                ctx.font = '500 15px "Inter", "Segoe UI", "Roboto", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.shadowColor = '#000';
-                ctx.shadowBlur = 5;
+                ctx.shadowBlur = 4;
 
                 for (let s = MIN_SPEED; s <= MAX_SPEED; s += 20) {
                     const angle = speedToAngle(s);
@@ -248,9 +258,9 @@
                     const sinA = Math.sin(angle);
                     ctx.beginPath();
                     ctx.moveTo(cosA * scaleRadius, sinA * scaleRadius);
-                    ctx.lineTo(cosA * (scaleRadius - 18), sinA * (scaleRadius - 18));
+                    ctx.lineTo(cosA * (scaleRadius - 16), sinA * (scaleRadius - 16));
                     ctx.strokeStyle = '#e9efff';
-                    ctx.lineWidth = 2.8;
+                    ctx.lineWidth = 2.6;
                     ctx.stroke();
                     ctx.fillStyle = '#f0f4ff';
                     ctx.fillText(s.toString(), cosA * numberRadius, sinA * numberRadius);
@@ -262,9 +272,9 @@
                     const sinA = Math.sin(angle);
                     ctx.beginPath();
                     ctx.moveTo(cosA * smallTickRadius, sinA * smallTickRadius);
-                    ctx.lineTo(cosA * (smallTickRadius - 11), sinA * (smallTickRadius - 11));
+                    ctx.lineTo(cosA * (smallTickRadius - 10), sinA * (smallTickRadius - 10));
                     ctx.strokeStyle = '#b5bedb';
-                    ctx.lineWidth = 1.7;
+                    ctx.lineWidth = 1.6;
                     ctx.stroke();
                 }
                 for (let s = MIN_SPEED; s <= MAX_SPEED; s += 5) {
@@ -276,58 +286,58 @@
                     ctx.moveTo(cosA * (smallTickRadius - 4), sinA * (smallTickRadius - 4));
                     ctx.lineTo(cosA * (smallTickRadius - 12), sinA * (smallTickRadius - 12));
                     ctx.strokeStyle = '#626b8a';
-                    ctx.lineWidth = 1;
+                    ctx.lineWidth = 0.9;
                     ctx.stroke();
                 }
                 ctx.restore();
 
                 const needleAngle = speedToAngle(currentSpeed);
-                const needleLength = scaleRadius * 0.92;
+                const needleLength = scaleRadius * 0.93;
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(needleAngle);
                 ctx.shadowColor = '#000';
-                ctx.shadowBlur = 14;
+                ctx.shadowBlur = 12;
                 ctx.shadowOffsetX = 1;
                 ctx.shadowOffsetY = 1;
                 ctx.beginPath();
                 ctx.moveTo(needleLength - 3, 0);
-                ctx.lineTo(-7, -5.8);
-                ctx.lineTo(-7, 5.8);
+                ctx.lineTo(-6, -5.5);
+                ctx.lineTo(-6, 5.5);
                 ctx.closePath();
-                const needleGrad = ctx.createLinearGradient(-8, 0, needleLength, 0);
+                const needleGrad = ctx.createLinearGradient(-7, 0, needleLength, 0);
                 needleGrad.addColorStop(0, '#ff5722');
                 needleGrad.addColorStop(0.85, '#ff8c42');
                 needleGrad.addColorStop(1, '#ffb86c');
                 ctx.fillStyle = needleGrad;
                 ctx.fill();
                 ctx.strokeStyle = '#351f12';
-                ctx.lineWidth = 1.2;
+                ctx.lineWidth = 1.1;
                 ctx.stroke();
-                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 8;
                 ctx.beginPath();
-                ctx.arc(0, 0, 16, 0, 2 * Math.PI);
+                ctx.arc(0, 0, 15, 0, 2 * Math.PI);
                 ctx.fillStyle = '#191d28';
                 ctx.fill();
                 ctx.strokeStyle = '#bcc6e0';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.8;
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.arc(0, 0, 7, 0, 2 * Math.PI);
+                ctx.arc(0, 0, 6, 0, 2 * Math.PI);
                 ctx.fillStyle = '#eef3ff';
                 ctx.fill();
                 ctx.strokeStyle = '#0e121c';
-                ctx.lineWidth = 1.7;
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
                 ctx.restore();
 
                 ctx.save();
-                ctx.font = '500 14px "Inter", "Segoe UI"';
+                ctx.font = '500 13px "Inter", "Segoe UI"';
                 ctx.fillStyle = '#a1accc';
                 ctx.shadowColor = '#000';
-                ctx.shadowBlur = 6;
+                ctx.shadowBlur = 5;
                 ctx.textAlign = 'center';
-                ctx.fillText('km/h', cx, cy + 58);
+                ctx.fillText('km/h', cx, cy + 52);
                 ctx.restore();
             }
 
@@ -345,7 +355,7 @@
                     animationFrame = null;
                     return;
                 }
-                currentSpeed += delta * 0.16;
+                currentSpeed += delta * 0.18;
                 drawGauge(currentSpeed);
                 updateDigital(currentSpeed);
                 animationFrame = requestAnimationFrame(animateLoop);
@@ -364,20 +374,32 @@
 
             function setGPSSpeed(speedKmh) {
                 const clamped = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speedKmh));
-                if (targetSpeed === clamped) return;
+                if (Math.abs(targetSpeed - clamped) < 0.1) return;
                 targetSpeed = clamped;
                 startAnimation();
+            }
+
+            // Вычисление расстояния между двумя координатами (формула гаверсинусов)
+            function getDistanceMeters(lat1, lon1, lat2, lon2) {
+                const R = 6371000; // радиус Земли в метрах
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
             }
 
             function updateGPSStatus(active, accuracy = null) {
                 if (active) {
                     gpsDot.className = 'status-dot active';
                     gpsStatus.textContent = 'GPS активен';
-                    accuracyInfo.textContent = accuracy !== null ? `±${Math.round(accuracy)} м` : '';
+                    accuracyBadge.textContent = accuracy !== null ? `±${Math.round(accuracy)}м` : '±?м';
                 } else {
                     gpsDot.className = 'status-dot';
                     gpsStatus.textContent = 'Нет сигнала';
-                    accuracyInfo.textContent = '';
+                    accuracyBadge.textContent = '±?м';
                 }
             }
 
@@ -395,21 +417,55 @@
             function handlePosition(position) {
                 const speedMps = position.coords.speed;
                 const accuracy = position.coords.accuracy;
+                const timestamp = position.timestamp;
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
 
+                let calculatedSpeed = null;
+                let usedMethod = '';
+
+                // Способ 1: используем готовую скорость из API
                 if (speedMps !== null && speedMps >= 0) {
-                    const speedKmh = speedMps * 3.6;
-                    setGPSSpeed(speedKmh);
-                } else {
-                    setGPSSpeed(0);
+                    calculatedSpeed = speedMps * 3.6;
+                    usedMethod = 'GPS-чип';
+                }
+
+                // Способ 2 (резервный): считаем сами по координатам
+                if (calculatedSpeed === null && lastPosition && lastTimestamp) {
+                    const timeDiff = (timestamp - lastTimestamp) / 1000; // секунды
+                    if (timeDiff > 0.1 && timeDiff < 10) {
+                        const distance = getDistanceMeters(lastPosition.lat, lastPosition.lon, lat, lon);
+                        const speedByCoords = (distance / timeDiff) * 3.6; // км/ч
+                        if (speedByCoords < 300) { // отсекаем нереалистичные значения
+                            calculatedSpeed = speedByCoords;
+                            usedMethod = 'по координатам';
+                        }
+                    }
+                }
+
+                // Сохраняем позицию для следующего замера
+                lastPosition = { lat, lon };
+                lastTimestamp = timestamp;
+
+                if (calculatedSpeed !== null) {
+                    setGPSSpeed(calculatedSpeed);
                 }
 
                 updateGPSStatus(true, accuracy);
+
+                // Отладочная информация
+                const rawStr = speedMps !== null ? (speedMps * 3.6).toFixed(1) : 'нет';
+                const calcStr = calculatedSpeed !== null ? calculatedSpeed.toFixed(1) : '—';
+                debugInfo.textContent = `GPS: ${rawStr} км/ч | Метод: ${usedMethod || 'ожидание'} | Точность: ±${Math.round(accuracy)}м`;
                 hideWarning();
             }
 
             function handleError(error) {
                 updateGPSStatus(false);
+                lastPosition = null;
+                lastTimestamp = null;
                 setGPSSpeed(0);
+                debugInfo.textContent = '';
 
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
@@ -429,7 +485,6 @@
             function startGeolocation() {
                 if (!navigator.geolocation) {
                     showWarning('Браузер не поддерживает геолокацию.');
-                    updateGPSStatus(false);
                     return;
                 }
 
@@ -439,6 +494,9 @@
 
                 hideWarning();
                 updateGPSStatus(false);
+                debugInfo.textContent = 'Инициализация...';
+                lastPosition = null;
+                lastTimestamp = null;
                 gpsStatus.textContent = 'Захват спутников...';
 
                 watchId = navigator.geolocation.watchPosition(
@@ -446,8 +504,8 @@
                     handleError,
                     {
                         enableHighAccuracy: true,
-                        maximumAge: 1000,
-                        timeout: 15000
+                        maximumAge: 500,
+                        timeout: 10000
                     }
                 );
             }
