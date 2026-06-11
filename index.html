@@ -198,7 +198,6 @@
             const retryBtn = document.getElementById('retryBtn');
 
             let watchId = null;
-            let gpsActive = false;
 
             function speedToAngle(speed) {
                 const clamped = Math.min(MAX_SPEED, Math.max(MIN_SPEED, speed));
@@ -339,14 +338,14 @@
 
             function animateLoop() {
                 const delta = targetSpeed - currentSpeed;
-                if (Math.abs(delta) < 0.06) {
+                if (Math.abs(delta) < 0.04) {
                     currentSpeed = targetSpeed;
                     drawGauge(currentSpeed);
                     updateDigital(currentSpeed);
                     animationFrame = null;
                     return;
                 }
-                currentSpeed += delta * 0.14;
+                currentSpeed += delta * 0.16;
                 drawGauge(currentSpeed);
                 updateDigital(currentSpeed);
                 animationFrame = requestAnimationFrame(animateLoop);
@@ -354,7 +353,7 @@
 
             function startAnimation() {
                 if (animationFrame === null) {
-                    if (Math.abs(targetSpeed - currentSpeed) > 0.05) {
+                    if (Math.abs(targetSpeed - currentSpeed) > 0.03) {
                         animationFrame = requestAnimationFrame(animateLoop);
                     } else {
                         drawGauge(currentSpeed);
@@ -371,7 +370,6 @@
             }
 
             function updateGPSStatus(active, accuracy = null) {
-                gpsActive = active;
                 if (active) {
                     gpsDot.className = 'status-dot active';
                     gpsStatus.textContent = 'GPS активен';
@@ -397,34 +395,40 @@
             function handlePosition(position) {
                 const speedMps = position.coords.speed;
                 const accuracy = position.coords.accuracy;
-                setGPSSpeed(speedMps !== null && speedMps >= 0 ? speedMps * 3.6 : 0);
+
+                if (speedMps !== null && speedMps >= 0) {
+                    const speedKmh = speedMps * 3.6;
+                    setGPSSpeed(speedKmh);
+                } else {
+                    setGPSSpeed(0);
+                }
+
                 updateGPSStatus(true, accuracy);
                 hideWarning();
             }
 
             function handleError(error) {
-                gpsActive = false;
                 updateGPSStatus(false);
                 setGPSSpeed(0);
 
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        showWarning('⛔ Доступ к геолокации запрещён. Разрешите в настройках браузера для этого сайта.', true);
+                        showWarning('Доступ к геолокации запрещён. Разрешите в настройках браузера.', true);
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        showWarning('⚠️ Местоположение недоступно. Включите GPS.', true);
+                        showWarning('Местоположение недоступно. Включите GPS.', true);
                         break;
                     case error.TIMEOUT:
-                        showWarning('⚠️ Таймаут. Попробуйте снова.', true);
+                        showWarning('Таймаут. Попробуйте снова.', true);
                         break;
                     default:
-                        showWarning('⚠️ Ошибка: ' + error.message, true);
+                        showWarning('Ошибка: ' + error.message, true);
                 }
             }
 
             function startGeolocation() {
                 if (!navigator.geolocation) {
-                    showWarning('⛔ Браузер не поддерживает геолокацию.');
+                    showWarning('Браузер не поддерживает геолокацию.');
                     updateGPSStatus(false);
                     return;
                 }
@@ -435,7 +439,7 @@
 
                 hideWarning();
                 updateGPSStatus(false);
-                gpsStatus.textContent = 'Запрос геолокации...';
+                gpsStatus.textContent = 'Захват спутников...';
 
                 watchId = navigator.geolocation.watchPosition(
                     handlePosition,
